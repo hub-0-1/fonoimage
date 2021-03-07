@@ -1,0 +1,44 @@
+{
+  "name": "fonoimage",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "build": "nodemon --exec 'webpack --config webpack.config.js' -e js,less,fnfn --watch src",
+    "build-production": "webpack --config webpack.production.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hub-0-1/fonoimage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hub-0-1/fonoimage/issues"
+  },
+  "homepage": "https://github.com/hub-0-1/fonoimage#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "json-loader": "^0.5.7",
+    "less": "^3.13.0",
+    "less-loader": "^7.1.0",
+    "nodemon": "^2.0.6",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.10.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
+    "file-saver": "^2.0.5",
+    "filepond": "^4.24.0",
+    "i18n": "^0.13.2",
+    "lodash": "^4.17.20",
+    "vue": "^2.6.12",
+    "vue-i18n": "^8.22.2"
+  }
+}
