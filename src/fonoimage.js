@@ -41,22 +41,21 @@ window.Fonoimage = class Fonoimage {
             stroke: 'blue',
             strokeWidth: 5,
             fill: 'transparent'
-          }); 
-          ellipse.on('selected', (options) => {
-            this.zone_actif = nouvelle_zone;
-
-            // Cacher les autres zones
-            _.each(this.zones, (zone) => {
-              console.log(zone);
-              zone.container_fonofone.style.display = "none";
-            });
-
-            // Afficher la zone selectionnee
-            this.zone_actif.container_fonofone.style.display = "initial";
+          }).on('selected', () => { 
+            this.afficher_fonofone(nouvelle_zone); 
           });
 
           this.canva.add(ellipse);
-          this.zone_actif = nouvelle_zone;
+          this.afficher_fonofone(nouvelle_zone);
+        },
+        afficher_fonofone: function (zone_active) {
+          this.zone_actif = zone_active;
+
+          // Cacher les autres zones
+          _.each(this.zones, (zone) => { zone.container_fonofone.style.display = "none"; });
+
+          // Afficher la zone selectionnee
+          this.zone_actif.container_fonofone.style.display = "initial";
         }
       },
       computed: { },
