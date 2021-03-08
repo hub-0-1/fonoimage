@@ -48,7 +48,7 @@ window.Fonoimage = class Fonoimage {
             // Cacher les autres zones
             _.each(this.zones, (zone) => {
               console.log(zone);
-              zone.container_fonofone.style.display = "hidden";
+              zone.container_fonofone.style.display = "none";
             });
 
             // Afficher la zone selectionnee
