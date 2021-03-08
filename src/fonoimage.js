@@ -90,6 +90,9 @@ window.Fonoimage = class Fonoimage {
             <div class="icone-wrapper" @click="mode = 'ajout'">
               <img src="${Ellipse}">
             </div>
+            <div class="icone-wrapper">
+              <img src="${Image}">
+            </div>
           </menu>
           <div class="app-fonoimage" ref="application_fonoimage">
             <canvas id="canva-fonoimage" ref="canva_fonoimage"></canvas>
