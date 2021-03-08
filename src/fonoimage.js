@@ -18,7 +18,7 @@ window.Fonoimage = class Fonoimage {
         archive,
         configuration: {parametres:{}},
         mode: 'normal',
-        fonofone_actif: null,
+        zone_actif: null,
         zones: {}
       },
       i18n,
@@ -27,14 +27,13 @@ window.Fonoimage = class Fonoimage {
           console.log(JSON.stringify(this.canva));
         },
         ajouter_zone: function (x, y, w, h) {
-          let zone = {id: `zone-${Date.now()}-${Math.round(Math.random() * 50)}`};
-          this.zones[zone.id] = zone;
+          let nouvelle_zone = {id: `zone-${Date.now()}-${Math.round(Math.random() * 50)}`};
+          this.zones[nouvelle_zone.id] = nouvelle_zone;
 
           // Fonctionnalites
-          let container_fonofone = document.createElement("div");
-          this.$refs.panneau_fonofone.appendChild(container_fonofone);
-
-          let fonofone = new Fonofone(container_fonofone, 'dauphin');
+          nouvelle_zone.container_fonofone = document.createElement("div");
+          nouvelle_zone.fonofone = new Fonofone(nouvelle_zone.container_fonofone, 'dauphin');
+          this.$refs.panneau_fonofone.appendChild(nouvelle_zone.container_fonofone);
 
           // Visuel
           var ellipse = new Fabric.Ellipse({
@@ -44,9 +43,20 @@ window.Fonoimage = class Fonoimage {
             fill: 'transparent'
           }); 
           ellipse.on('selected', (options) => {
-            this.fonofone_actif = fonofone;
+            this.zone_actif = nouvelle_zone;
+
+            // Cacher les autres zones
+            _.each(this.zones, (zone) => {
+              console.log(zone);
+              zone.container_fonofone.style.display = "hidden";
+            });
+
+            // Afficher la zone selectionnee
+            this.zone_actif.container_fonofone.style.display = "initial";
           });
+
           this.canva.add(ellipse);
+          this.zone_actif = nouvelle_zone;
         }
       },
       computed: { },
@@ -64,8 +74,9 @@ window.Fonoimage = class Fonoimage {
           if(!options.target) { 
 
             // Cacher les fonofones
-            this.fonofone_actif = null; 
+            this.zone_actif = null; 
 
+            // Creation d'une nouvelle zone
             if(this.mode == "ajout:pret") {
               this.mode = "ajout:encours";
               let init_event = options.e;
@@ -83,6 +94,8 @@ window.Fonoimage = class Fonoimage {
               // Creer a la fin du drag
               this.canva.on('mouse:up', (options) => {
                 this.canva.off('mouse:move');
+                this.canva.off('mouse:up');
+
                 coords.push({
                   x: options.absolutePointer.x,
                   y: options.absolutePointer.y
@@ -123,7 +136,7 @@ window.Fonoimage = class Fonoimage {
           </menu>
           <div class="app-fonoimage" ref="application_fonoimage">
             <canvas id="canva-fonoimage" ref="canva_fonoimage"></canvas>
-            <div class="panneau-fonofone" :class="{actif: fonofone_actif}" ref="panneau_fonofone">
+            <div class="panneau-fonofone" :class="{actif: zone_actif}" ref="panneau_fonofone">
             </div>
           </div>
         </section>
