@@ -14,13 +14,12 @@ window.Fonoimage = class Fonoimage {
   constructor (el, archive) {
     this.app = new Vue({
       el,
-      components: { },
       data: {
-        el, archive,
+        archive,
         configuration: {parametres:{}},
         mode: 'normal',
         fonofone_actif: null,
-        fonofones: {} 
+        zones: {}
       },
       i18n,
       methods: {
@@ -28,6 +27,8 @@ window.Fonoimage = class Fonoimage {
           console.log(JSON.stringify(this.canva));
         },
         ajouter_zone: function (x, y, w, h) {
+          let zone = {id: `zone-${Date.now()}-${Math.round(Math.random() * 50)}`};
+          this.zones[zone.id] = zone;
 
           // Fonctionnalites
           let container_fonofone = document.createElement("div");
@@ -56,29 +57,54 @@ window.Fonoimage = class Fonoimage {
         });
 
         this.canva.on('mouse:down', (options) => {
+
+          // Si on ne clique pas sur une zone
           if(!options.target) { 
 
-            // Reset affichage
+            // Cacher les fonofones
             this.fonofone_actif = null; 
 
-            let shadow_el = document.createElement('div');
-            shadow_el.className = "shadow";
-            
-            application.appendChild(shadow_el);
+            if(this.mode == "ajout:pret") {
+              this.mode = "ajout:encours";
+              let coords = [{
+                x: options.absolutePointer.x,
+                y: options.absolutePointer.y
+              }];
 
-            // Ecouter creation
-            this.canva.on('mouse:up', (options) => {
-              this.canva.off('mouse:move');
-              application.removeChild(shadow_el);
-            });
+              // Affichage shadow
+              console.log(options.e.clientX, options.e.clientY);
+              this.$refs.shadow.style.left = options.e.clientX + "px";
+              this.$refs.shadow.style.right = options.e.clientX + "px";
+              this.$refs.shadow.style.top = options.e.clientY + "px";
+              this.$refs.shadow.style.bottom = options.e.clientY + "px";
 
-            this.canva.on('mouse:move', (options) => {
-              console.log(options);
-            });
+              // Creer a la fin du drag
+              this.canva.on('mouse:up', (options) => {
+                this.canva.off('mouse:move');
+                coords.push({
+                  x: options.absolutePointer.x,
+                  y: options.absolutePointer.y
+                })
+
+                this.ajouter_zone(
+                  Math.min(coords[0].x, coords[1].x), // x
+                  Math.min(coords[0].y, coords[1].y), // y
+                  Math.abs(coords[0].x - coords[1].x) / 2, // width
+                  Math.abs(coords[0].y - coords[1].y) / 2// height
+                );
+
+                this.mode = "normal";
+              });
+
+              // Afficher le shadow
+              this.canva.on('mouse:move', (options) => {
+                this.$refs.shadow.style.right = options.e.clientX + "px";
+                this.$refs.shadow.style.bottom = options.e.clientY + "px";
+                console.log(options.e.clientX, options.e.clientY);
+              });
+            }
           }
         });
-
-        this.ajouter_zone(0, 0, 20, 50);
       },
       template: `
       <div class="fonoimage">
@@ -87,7 +113,7 @@ window.Fonoimage = class Fonoimage {
         </menu>
         <section class="principal">
           <menu class="vertical">
-            <div class="icone-wrapper" @click="mode = 'ajout'">
+            <div class="icone-wrapper" @click="mode = 'ajout:pret'">
               <img src="${Ellipse}">
             </div>
             <div class="icone-wrapper">
@@ -100,6 +126,7 @@ window.Fonoimage = class Fonoimage {
             </div>
           </div>
         </section>
+        <div class="shadow" :class="{actif: mode == 'ajout:encours'}" ref="shadow"></div>
       </div>`
     });
   }

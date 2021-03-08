@@ -83,11 +83,12 @@
 
   .shadow {
     position: absolute;
-    top: 10;
-    lefT: 10;
-    width: 10px;
-    height: 10px;
 
-    border: 1px doted red;
+    border: 2px dashed red;
+    display: none;
+
+    &.actif {
+      display: block;
+    }
   }
 }
