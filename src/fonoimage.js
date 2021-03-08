@@ -39,7 +39,9 @@ window.Fonoimage = class Fonoimage {
           // Visuel
           var ellipse = new Fabric.Ellipse({
             top: y, left: x, rx: w, ry: h,
-            fill: 'blue'
+            stroke: 'blue',
+            strokeWidth: 5,
+            fill: 'transparent'
           }); 
           ellipse.on('selected', (options) => {
             this.fonofone_actif = fonofone;
@@ -66,17 +68,17 @@ window.Fonoimage = class Fonoimage {
 
             if(this.mode == "ajout:pret") {
               this.mode = "ajout:encours";
+              let init_event = options.e;
               let coords = [{
                 x: options.absolutePointer.x,
                 y: options.absolutePointer.y
               }];
 
               // Affichage shadow
-              console.log(options.e.clientX, options.e.clientY);
               this.$refs.shadow.style.left = options.e.clientX + "px";
-              this.$refs.shadow.style.right = options.e.clientX + "px";
               this.$refs.shadow.style.top = options.e.clientY + "px";
-              this.$refs.shadow.style.bottom = options.e.clientY + "px";
+              this.$refs.shadow.style.width = 0;
+              this.$refs.shadow.style.height = 0;
 
               // Creer a la fin du drag
               this.canva.on('mouse:up', (options) => {
@@ -98,9 +100,8 @@ window.Fonoimage = class Fonoimage {
 
               // Afficher le shadow
               this.canva.on('mouse:move', (options) => {
-                this.$refs.shadow.style.right = options.e.clientX + "px";
-                this.$refs.shadow.style.bottom = options.e.clientY + "px";
-                console.log(options.e.clientX, options.e.clientY);
+                this.$refs.shadow.style.width = (options.e.clientX - init_event.clientX) + "px";
+                this.$refs.shadow.style.height = (options.e.clientY - init_event.clientY) + "px";
               });
             }
           }
