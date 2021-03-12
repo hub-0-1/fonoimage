@@ -2,6 +2,8 @@ import Vue from 'vue';
 import _ from 'lodash';
 const Fabric = require("fabric").fabric;
 
+import Enregistreur from './enregistreur.js';
+
 import './style.less';
 import Image from './images/image.svg';
 import Ellipse from './images/ellipse.svg';
@@ -25,6 +27,11 @@ window.Fonoimage = class Fonoimage {
         mode: 'normal',
         zone_actif: null,
         ctx_audio: new AudioContext,
+        media_stream_destination: null,
+        enregistrement: {
+          encours: false,
+          enregistreur: null
+        },
         zones: {}
       },
       methods: {
@@ -80,7 +87,10 @@ window.Fonoimage = class Fonoimage {
 
           // Fonctionnalites
           nouvelle_zone.container_fonofone = document.createElement("div");
+
+          // Fonofone
           nouvelle_zone.noeud_sortie = this.ctx_audio.createGain();
+          nouvelle_zone.noeud_sortie.connect(this.media_stream_destination);
           nouvelle_zone.fonofone = new Fonofone(nouvelle_zone.container_fonofone, {
             ctx_audio: this.ctx_audio,
             noeud_sortie: this.noeud_sortie
@@ -107,11 +117,13 @@ window.Fonoimage = class Fonoimage {
           _.each(this.zones, (zone) => { zone.container_fonofone.style.display = "none"; });
           this.zone_actif.container_fonofone.style.display = "initial";
         },
+        // TODO Session vs Enregistrement?
         toggle_session: function () {
           this.mode.match(/session/) ? this.fin_session() : this.debut_session();
         },
         debut_session: function () {
           this.mode = "session:active";
+          this.get_enregistreur().debuter();
           new Fabric.Image.fromURL(Micro, (micro) => {
             console.log(micro);
             this.micro = micro;
@@ -141,7 +153,18 @@ window.Fonoimage = class Fonoimage {
           this.mode = "normal";
           this.canva.remove(this.micro);
           this.micro = null;
+          this.get_enregistreur().terminer().then((blob) => {
+            console.log(blob);
+          })
+        },
+        get_enregistreur: function () {
+          if(!this.enregistrement.enregistreur)
+            this.enregistrement.enregistreur = new Enregistreur(this.media_stream_destination.stream);
+          return this.enregistrement.enregistreur;
         }
+      },
+      created: function () {
+        this.media_stream_destination = this.ctx_audio.createMediaStreamDestination(); 
       },
       mounted: function () {
         let application = this.$refs.application_fonoimage;
