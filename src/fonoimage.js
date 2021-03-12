@@ -14,16 +14,19 @@ Vue.use(VueI18n);
 
 window.Fonoimage = class Fonoimage {
   constructor (el, archive) {
+    let AudioContext = window.AudioContext || window.webkitAudioContext;
+
     this.app = new Vue({
       el,
+      i18n,
       data: {
         archive,
         configuration: {parametres:{}},
         mode: 'normal',
         zone_actif: null,
+        ctx_audio: new AudioContext,
         zones: {}
       },
-      i18n,
       methods: {
         exporter: function () {
           console.log(JSON.stringify(this.canva));
@@ -77,7 +80,11 @@ window.Fonoimage = class Fonoimage {
 
           // Fonctionnalites
           nouvelle_zone.container_fonofone = document.createElement("div");
-          nouvelle_zone.fonofone = new Fonofone(nouvelle_zone.container_fonofone, 'dauphin');
+          nouvelle_zone.noeud_sortie = this.ctx_audio.createGain();
+          nouvelle_zone.fonofone = new Fonofone(nouvelle_zone.container_fonofone, {
+            ctx_audio: this.ctx_audio,
+            noeud_sortie: this.noeud_sortie
+          });
           this.$refs.panneau_fonofone.appendChild(nouvelle_zone.container_fonofone);
 
           // Visuel
