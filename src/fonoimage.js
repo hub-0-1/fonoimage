@@ -188,28 +188,29 @@ window.Fonoimage = class Fonoimage {
       },
       template: `
       <div class="fonoimage">
-        <menu class="horizontal">
-          Menu
-        </menu>
-        <section class="principal">
-          <menu class="vertical">
-            <div class="icone-wrapper invert" :class="{actif: mode.match(/ajout/)}" @click="mode = 'ajout:pret'">
-              <img src="${Ellipse}">
-            </div>
-            <div class="icone-wrapper invert">
-              <img src="${Image}">
-            </div>
-            <div class="icone-wrapper" :class="{flash: mode == 'session:active'}" @click="toggle_session">
-              <img src="${Record}">
-            </div>
+        <div class="panneau-fonoimage">
+          <menu class="horizontal">
+            Menu
           </menu>
-          <div class="app-fonoimage" ref="application_fonoimage">
-            <canvas id="canva-fonoimage" ref="canva_fonoimage"></canvas>
-            <div class="panneau-fonofone" :class="{actif: zone_actif}" ref="panneau_fonofone">
+          <section class="principal">
+            <menu class="vertical">
+              <div class="icone-wrapper invert" :class="{actif: mode.match(/ajout/)}" @click="mode = 'ajout:pret'">
+                <img src="${Ellipse}">
+              </div>
+              <div class="icone-wrapper invert">
+                <img src="${Image}">
+              </div>
+              <div class="icone-wrapper" :class="{flash: mode == 'session:active'}" @click="toggle_session">
+                <img src="${Record}">
+              </div>
+            </menu>
+            <div class="app-fonoimage" ref="application_fonoimage">
+              <canvas id="canva-fonoimage" ref="canva_fonoimage"></canvas>
             </div>
-          </div>
-        </section>
-        <div class="shadow" :class="{actif: mode == 'ajout:encours'}" ref="shadow"></div>
+          </section>
+          <div class="shadow" :class="{actif: mode == 'ajout:encours'}" ref="shadow"></div>
+        </div>
+        <div class="panneau-fonofone" :class="{actif: zone_actif}" ref="panneau_fonofone"></div>
       </div>`
     });
   }
