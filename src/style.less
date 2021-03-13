@@ -17,6 +17,7 @@
   width: 100%;
   height: 100%;
   display: flex;
+  background-color: @noir;
 
   .panneau-fonoimage {
     height: 100%;
@@ -26,7 +27,6 @@
     min-width: 0;
 
     & > menu.horizontal {
-      background-color: @noir;
       color: @blanc;
       display: flex;
       justify-content: flex-end;
@@ -36,7 +36,26 @@
       img {
         height: 20px;
         margin: 5px 10px;
-        filter: invert(1);
+      }
+
+      .crayon {
+        &.actif {
+          border: 1px solid @blanc;
+        }
+      }
+
+      .record {
+        visibility: hidden;
+
+        &.actif {
+          visibility: initial;
+        }
+
+        &.flash {
+          animation-name: flash;
+          animation-duration: 2s;
+          animation-iteration-count: infinite;
+        }
       }
     }
 
@@ -51,18 +70,17 @@
         width: 30px;
         margin: 0;
         padding: 10px;
+        visibility: hidden;
+
+        &.actif{
+          visibility: initial;
+        }
 
         .icone-wrapper {
           width: 100%;
 
           &.actif {
             border: 1px solid @blanc;
-          }
-
-          &.flash {
-            animation-name: flash;
-            animation-duration: 2s;
-            animation-iteration-count: infinite;
           }
 
           &.invert {
@@ -114,6 +132,10 @@
         display: initial;
       }
     }
+  }
+
+  .inverser {
+    filter: invert(1);
   }
 }
 

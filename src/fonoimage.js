@@ -3,12 +3,14 @@ import _ from 'lodash';
 const Fabric = require("fabric").fabric;
 
 import Enregistreur from './enregistreur.js';
+//import Zone from './zone.js';
 
 import './style.less';
 import Image from './images/image.svg';
 import Ellipse from './images/ellipse.svg';
 import Record from './images/record.svg';
 import Micro from './images/micro.svg';
+import Crayon from './images/crayon.svg';
 
 import VueI18n from 'vue-i18n';
 import i18n from './traductions.js';
@@ -39,7 +41,7 @@ window.Fonoimage = class Fonoimage {
           console.log(JSON.stringify(this.canva));
         },
         dessiner_nouvelle_zone: function (options) {
-          this.mode = "ajout:encours";
+          this.mode = "edition:ajout:encours";
 
           // Initialisation des variables de scope
           let init_event = options.e;
@@ -72,7 +74,7 @@ window.Fonoimage = class Fonoimage {
               Math.abs(coords[0].y - coords[1].y) / 2// height
             );
 
-            this.mode = "normal";
+            this.mode = "edition";
           });
 
           // Afficher le shadow
@@ -120,6 +122,9 @@ window.Fonoimage = class Fonoimage {
         // TODO Session vs Enregistrement?
         toggle_session: function () {
           this.mode.match(/session/) ? this.fin_session() : this.debut_session();
+        },
+        toggle_mode_edition: function () {
+          this.mode = this.mode.match(/edition/) ? "normal" : "edition";
         },
         debut_session: function () {
           this.mode = "session:active";
@@ -182,7 +187,7 @@ window.Fonoimage = class Fonoimage {
             this.zone_actif = null; 
 
             // Creation d'une nouvelle zone
-            if(this.mode == "ajout:pret") { this.dessiner_nouvelle_zone(options); }
+            if(this.mode == "edition:ajout:pret") { this.dessiner_nouvelle_zone(options); }
           }
         });
       },
@@ -190,18 +195,16 @@ window.Fonoimage = class Fonoimage {
       <div class="fonoimage">
         <div class="panneau-fonoimage">
           <menu class="horizontal">
-            Menu
+            <img src="${Record}" class="record" :class="{actif: mode.match(/normal|session/), flash: mode == 'session:active'}" @click="toggle_session">
+            <img src="${Crayon}" class="crayon" :class="{actif: mode.match(/edition/)}" @click="toggle_mode_edition"/>
           </menu>
           <section class="principal">
-            <menu class="vertical">
+            <menu class="vertical" :class="{actif: mode.match(/edition/)}">
               <div class="icone-wrapper invert" :class="{actif: mode.match(/ajout/)}" @click="mode = 'ajout:pret'">
                 <img src="${Ellipse}">
               </div>
               <div class="icone-wrapper invert">
                 <img src="${Image}">
-              </div>
-              <div class="icone-wrapper" :class="{flash: mode == 'session:active'}" @click="toggle_session">
-                <img src="${Record}">
               </div>
             </menu>
             <div class="app-fonoimage" ref="application_fonoimage">
@@ -210,7 +213,9 @@ window.Fonoimage = class Fonoimage {
           </section>
           <div class="shadow" :class="{actif: mode == 'ajout:encours'}" ref="shadow"></div>
         </div>
-        <div class="panneau-fonofone" :class="{actif: zone_actif}" ref="panneau_fonofone"></div>
+        <div class="panneau-fonofone" :class="{actif: zone_actif}" ref="panneau_fonofone">
+          <div v-for="zone in zones"></div>
+        </div>
       </div>`
     });
   }
