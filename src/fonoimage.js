@@ -84,7 +84,7 @@ window.Fonoimage = class Fonoimage {
           });
         },
         ajouter_zone: function (x, y, w, h) {
-          let nouvelle_zone = {id: `zone-${Date.now()}-${Math.round(Math.random() * 50)}`};
+          let nouvelle_zone = {id: `zone_${Date.now()}_${Math.round(Math.random() * 50)}`};
           this.zones[nouvelle_zone.id] = nouvelle_zone;
 
           // Fonctionnalites
@@ -95,7 +95,15 @@ window.Fonoimage = class Fonoimage {
           nouvelle_zone.noeud_sortie.connect(this.media_stream_destination);
           nouvelle_zone.fonofone = new Fonofone(nouvelle_zone.container_fonofone, {
             ctx_audio: this.ctx_audio,
-            noeud_sortie: this.noeud_sortie
+            noeud_sortie: this.noeud_sortie,
+            integration_fonoimage: true
+          });
+          nouvelle_zone.fonofone.then((fonofone) => {
+            nouvelle_zone.app = fonofone;
+          });
+
+          this.$watch(`zones.${nouvelle_zone.id}.app.mode_fonoimage`, (tmp) => {
+            console.log(tmp)
           });
           this.$refs.panneau_fonofone.appendChild(nouvelle_zone.container_fonofone);
 
@@ -200,7 +208,7 @@ window.Fonoimage = class Fonoimage {
           </menu>
           <section class="principal">
             <menu class="vertical" :class="{actif: mode.match(/edition/)}">
-              <div class="icone-wrapper invert" :class="{actif: mode.match(/ajout/)}" @click="mode = 'ajout:pret'">
+              <div class="icone-wrapper invert" :class="{actif: mode.match(/ajout/)}" @click="mode = 'edition:ajout:pret'">
                 <img src="${Ellipse}">
               </div>
               <div class="icone-wrapper invert">
